@@ -1,0 +1,24 @@
+{
+  "name": "websockets-chat-starter",
+  "version": "1.0.0",
+  "description": "Websocket Chat App",
+  "main": "./src/server.js",
+  "repository": "https://github.com/mfasman95/websockets-chat-starter.git",
+  "author": "Matthew Fasman <matthew.f4sm4n@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "nodemon": "nodemon ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "dependencies": {
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.6.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "nodemon": "^1.12.0"
+  }
+}
