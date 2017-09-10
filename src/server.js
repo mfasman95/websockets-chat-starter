@@ -16,3 +16,5 @@ const onRequest = (req, res) => {
 const app = http.createServer(onRequest).listen(PORT, HOST, () => {
   console.dir(`Server listening at ${HOST}:${PORT}`);
 });
+
+require('./sockets')(app);

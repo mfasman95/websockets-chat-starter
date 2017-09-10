@@ -1,48 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-		<script src="/socket.io/socket.io.js"></script>
+
+	<head>
+		<style>
+			textarea {
+				display: block;
+				background-color: #EEEEEE;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<label for="user">Username:</label>
+		<input id="username" name="user" type="text" />
+		<input id="connect" type='button' value='connect' />
+		<br/>
+		<label for="message">Message:</label>
+		<input id="message" name="message" type="text" disabled/>
+		<input id="send" type="button" value="send" disabled/>
+
+		<textarea id="chat" rows="20" cols="40" readonly></textarea>
+		<h3>Commands</h3>
+		<p>All commands are preceeded by a '/'. If the command following the '/' is not recognized, you will be informed by the server. In the following list, any value surrounded by {} are meant to be replaced completely by user input. {} is not expected as part of the command.</p>
+		<ul>
+			<li><b>/roll {dX} - </b>You can ask the server to roll a variety of different dice for you. This includes d4, d6, d8, d10, d12, d20, and d100. If you try to roll a different die, the server will tell you that the die was not valid.</li>
+			<li><b>/me {action} - </b>If you send this command to the server, it will tell all users that you did whatever the specified action is. For example, if my username is Joe, "/me takes over the world" will have the server say to everyone "Joe takes over the world".</li>
+			<li><b>/w {name} {message} - </b>This will send a whisper with the text of {message} to the user specified by {name}. If that user does not exist, you will be notified.</li>
+			<li><b>/r {message} - </b>This will send a response (in the form of a whisper) to the last user to send a whisper to you. If you have not been whispered, you will be notified. If the user you are replying to is no longer connected, you will be notified.</li>
+		</ul>
+
+		<h3>Additional Features</h3>
+		<ul>
+			<li><b>No Duplicates Users - </b>The server will identify if the username you are attempting to use is already in use, and reject you attempting to join.</li>
+			<li><b>Enter To Send Input - </b>I set up event listeners to allow you to send an input out of either input field by pressing the enter key. This means that if you are typing in a username and hit enter, you will connect with that name. It also means that if you are typing a message and hit enter that message will be sent.</li>
+			<li><b>Empty Message Field - </b>Whenever you finish sending a message (either by clicking the button or hitting enter), the input field for the message clears.</li>
+		</ul>
+		<script src="https://cdn.socket.io/socket.io-1.4.0.js"></script>
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-		
+
 		<script type="text/babel">
 			const connectSocket = (e) => {
 				const message = document.querySelector("#message");
 				const chat = document.querySelector("#chat");
-				const socket = io.connect();
+				window.socket = io.connect();
 
-				socket.on('connect', () => {
-					console.log('Connecting to socket server...');
-					socket.emit('join', { name: document.querySelector("#username").value || 'unknown' });
+				socket.on('connect', () => socket.emit('join', { name: document.querySelector("#username").value || 'unknown' }));
+
+				socket.on('joined', () => {
+						document.querySelector('#connect').disabled = true;
+						document.querySelector('#username').disabled = true;
+						document.querySelector('#send').disabled = false;
+						document.querySelector('#message').disabled = false;
 				});
 
-				socket.on('msg', (data) => {
-					console.dir(data);
-				})
+				socket.on('msg', data => document.querySelector('#chat').value = `${data.name} - ${data.msg}\n${document.querySelector('#chat').value}`);
+				socket.on('action', data => document.querySelector('#chat').value = `${data.action}\n${document.querySelector('#chat').value}`);
+				socket.on('whisperTo', data => document.querySelector('#chat').value = `[Whisper to ${data.name} - ${data.msg}]\n${document.querySelector('#chat').value}`);
+				socket.on('whisperFrom', data => document.querySelector('#chat').value = `[Whisper from ${data.name} - ${data.msg}]\n${document.querySelector('#chat').value}`);
 			};
+
+			const sendMessage = (e) => {
+				const message = document.querySelector('#message');
+				socket.emit('msgToServer', { msg: message.value });
+				message.value = '';
+			}
 
 			const init = () => {
-				const connect = document.querySelector("#connect");
-				connect.addEventListener('click', connectSocket);
+				document.querySelector("#connect").addEventListener('click', connectSocket);
+				document.querySelector("#username").addEventListener('keypress', (e) => {
+					if (e.key === 'Enter') connectSocket();
+				});
+				document.querySelector("#send").addEventListener('click', sendMessage);
+				document.querySelector("#message").addEventListener('keypress', (e) => {
+					if (e.key === 'Enter') sendMessage();
+				});
 			};
-
+			
 			window.onload = init;
 		</script>
-	<style>
-		textarea {
-			display: block;
-			background-color: #EEEEEE;
-		}
-	</style>
-</head>
-<body>
-	<label for="user">Username:</label>
-	<input id="username" name="user" type="text"/>
-	<input id="connect" type='button' value='connect'/>
-	<br/>
-	<label for="message">Message:</label>
-	<input id="message" name="message" type="text"/>
-	<input id="send" type="button" value="send" />
-	
-	<textarea id="chat" rows="20" cols="40" readonly> </textarea>
-</body>
+
+	</body>
+
 </html>
