@@ -56,7 +56,6 @@ const onMsg = (sock) => {
               name: 'server',
               msg: '[You cannot send a whisper to yourself.]',
             });
-
           } else {
             // Store the last person who sent a whisper to the target socket
             users[target].lastWhisperFrom = socket.name;
