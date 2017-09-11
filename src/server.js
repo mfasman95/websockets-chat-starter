@@ -22,15 +22,13 @@ const onRequest = (req, res) => {
     }
     default: {
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.write(index);
+      res.write(`<h1>Invalid URL: ${req.url.substring(req.url.indexOf('/') + 1)}</h1>`);
       break;
     }
   }
   res.end();
 };
 
-const app = http.createServer(onRequest).listen(PORT, HOST, () => {
+require('./sockets')(http.createServer(onRequest).listen(PORT, HOST, () => {
   console.dir(`Server listening at ${HOST}:${PORT}`);
-});
-
-require('./sockets')(app);
+}));
