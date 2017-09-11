@@ -30,5 +30,6 @@ const onRequest = (req, res) => {
 };
 
 require('./sockets')(http.createServer(onRequest).listen(PORT, () => {
+  console.log(process.env);
   console.dir(`Server listening at 127.0.0.1:${PORT}`);
 }));
