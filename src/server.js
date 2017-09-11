@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
-// const HOST = process.env.HOST || process.env.NODE_HOST || '127.0.0.1';
 
 const index = fs.readFileSync(path.join(__dirname, './../client/client.html'));
 const icon = fs.readFileSync(path.join(__dirname, './../client/favicon.ico'));
@@ -30,6 +29,5 @@ const onRequest = (req, res) => {
 };
 
 require('./sockets')(http.createServer(onRequest).listen(PORT, () => {
-  console.log(process.env);
   console.dir(`Server listening at 127.0.0.1:${PORT}`);
 }));
