@@ -96,7 +96,7 @@ const onMsg = (sock) => {
             });
             // Send a message to the socket that sent the reply confirming it went through
             socket.emit('whisperTo', {
-              name: socket.name,
+              name: target,
               msg: postCommand,
             });
           }
