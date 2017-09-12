@@ -61,7 +61,7 @@ const onMsg = (sock) => {
             users[target].lastWhisperFrom = socket.name;
             // Send the whipser to the specified target
             users[target].emit('whisperFrom', {
-              name: target,
+              name: socket.name,
               msg: message,
             });
             // Send a message to the socket that sent the whisper confirming it went through
