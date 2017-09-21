@@ -140,15 +140,18 @@ const onDisconnect = (sock) => {
   const socket = sock;
 
   socket.on('disconnect', () => {
-    socket.broadcast.to('room1').emit('msg', {
-      name: 'server',
-      msg: `${socket.name} has left the room.`,
-    });
-    delete users[socket.name];
-    socket.broadcast.to('room1').emit('msg', {
-      name: 'server',
-      msg: `There are ${Object.keys(users).length} users online`,
-    });
+    // Only worry about cleanup if user is being stored
+    if (users[socket.name]) {
+      socket.broadcast.to('room1').emit('msg', {
+        name: 'server',
+        msg: `${socket.name} has left the room.`,
+      });
+      delete users[socket.name];
+      socket.broadcast.to('room1').emit('msg', {
+        name: 'server',
+        msg: `There are ${Object.keys(users).length} users online`,
+      });
+    }
   });
 };
 
